@@ -1,0 +1,198 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/xui-table.css">
+    <link rel="stylesheet" href="../node_modules/perfect-scrollbar/css/perfect-scrollbar.css">
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/perfect-scrollbar/dist/perfect-scrollbar.js"></script>
+    
+
+</head>
+<body>
+    <div class="xui-table xui-table-bordered" style="width: 800px; height: 400px;">
+        <div class="xui-table-header" id="tableHeader">
+            <!--表头-->
+        </div>
+        <div  class="xui-table-body" style="top: 36px; height: 364px; width: 800px;">
+            <div id="tableBody-scrollbar" class="xui-table-body-wheel-area" style=" width: 800px;height: 364px">
+                <div id="tableBody">
+                    <!--表体数据-->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script>
+        var rowHeight = 46;
+        function initData (len) {
+            var arr = [];
+            for(var i=0; i< len; i++) {
+                var k = i+1;
+                arr.push({
+                    id: k,
+                    name: '姓名'+ k,
+                    sex: '男',
+                    birthday: (2000 +i) + '-01-01',
+                    maray: true,
+                    addr: `天齐大道${7000 + i}号`,
+                    company: `inspur`,
+                    nianxin: Math.round(Math.random(10000) * 10000) * 12,
+                    zhiwei: 'CEO&CPU'
+                })
+            }
+            return arr;
+        }
+
+        var cols = [
+            { field: 'id', width: 100, title: 'ID' },
+            { field: 'name', width: 130, title: '姓名' },
+            { field: 'sex', width: 70, title: '性别' },
+            { field: 'birthday', width: 120, title: '出生日期' },
+            { field: 'maray', width: 70, title: '婚否' },
+            { field: 'addr', width: 170, title: '地址' },
+            { field: 'company', width: 100, title: '公司' },
+            { field: 'nianxin', width: 70, title: '年薪' },
+            { field: 'zhiwei', width: 100, title: '职位' },
+        ]
+
+        function getLeft(index, cols) {
+            if (index > 0) {
+                return cols.reduce((c, k, i) =>{
+                    if (i <= index -1) {
+                        c = c + k.width; 
+                    }
+                    return c;
+                }, 0);
+            }
+
+            return 0;
+        }
+
+        function getTop(index) {
+            return index * rowHeight;
+        }
+
+        function createTableHeader () {
+            var cellHtml = [];
+            var minWidth = 0;
+            cols.forEach((item, idx) => {
+                var width = item.width;
+                var title = item.title;
+                var left = getLeft(idx, cols);
+
+                var headerCell = `<div class="xui-table-cell-header">
+                    <div class="xui-table-cell" style="width: ${width}px;left: ${left}px">
+                        <div class="xui-table-cell-content">
+                            ${title}
+                        </div>
+                    </div>
+                </div>`;
+                cellHtml.push(headerCell);
+                minWidth += width;
+            })
+            
+            return {
+                thtml: `<div class="xui-table-row xui-table-row-header" style="min-width: ${minWidth}px;">${cellHtml.join('')}</div>`,
+                width: minWidth
+            };
+        }
+
+        function createTableRows(rows, lastScrollTop) {
+            var trs = [];
+            
+            rows.forEach((r, i) => {
+                var top = getTop(i) + lastScrollTop;
+                var minWidth = 0;
+                var tds = [];
+                cols.forEach((col, idx) => {
+                    var width = col.width;
+                    var title = r[col.field];
+                    var left = getLeft(idx, cols);
+
+                    var td = ` <div class="xui-table-cell" style="width: ${width}px;height:${rowHeight}px;left: ${left}px">
+                        <div class="xui-table-cell-content" style="height:${rowHeight}px">
+                            ${title}
+                        </div>
+                    </div>`;
+                    tds.push(td);
+                    minWidth += width;
+                });
+
+                var tr = `<div class="xui-table-row" style="min-width: ${minWidth}px; height: ${rowHeight}px;transform: translate3d(0px, ${top}px, 0px);">
+                        ${tds.join('')}
+                    </div>`;
+
+                trs.push(tr);
+            })
+
+            return trs;
+        }
+
+        
+
+        function renderRow(allRows, scrollTop) {
+            var minTop = scrollTop;
+            var maxTop = minTop + 460;
+
+            var top = 0;
+            var rows= [];
+            let topHideHeight = 0;
+            let bottomHideHeight = 0;
+            for(var i=0; i< allRows.length; i++) {
+                top += rowHeight;
+                if (top + rowHeight < minTop) {
+                    topHideHeight += rowHeight;
+                    continue;
+                } else {
+                    if (top > maxTop) {
+                        bottomHideHeight += rowHeight;
+                        continue;
+                    }
+                }
+                var n = allRows[i];
+                rows.push(n);
+            };
+
+            let topHideDiv = topHideHeight? 
+            `<div class="rs-table-row virtualized" style="height: ${topHideHeight}px; transform: translate3d(0px, 0px, 0px); backface-visibility: hidden;"></div>`
+            : '';
+            let bottomHideDiv = `<div class="rs-table-row virtualized" style="height: ${bottomHideHeight}px; transform: translate3d(0px, 0px, 0px); backface-visibility: hidden;"></div>`
+            
+            var rowsTr = [topHideDiv, ...createTableRows(rows, topHideHeight), bottomHideDiv ];
+            $('#tableBody').html(rowsTr.join(''));
+        }
+
+        $(function(){
+            var rowsCount = 100000;
+            var allRows = initData(rowsCount);
+
+            const thead = createTableHeader();
+            $('#tableHeader').append(thead.thtml);
+            $('#tableBody').height(rowsCount * rowHeight).width(thead.width);
+            
+            const ps = new PerfectScrollbar('#tableBody-scrollbar', {
+                minScrollbarLength: 20
+            });
+            renderRow(allRows, 0);
+
+            $('#tableBody-scrollbar')[0].addEventListener('ps-scroll-y', function(e, a) {
+                const top = $(this).scrollTop();
+                renderRow(allRows, top);
+                console.log(top);
+            });
+
+            $('#tableBody-scrollbar')[0].addEventListener('ps-scroll-x', function(e, a) {
+                var left = $(this).scrollLeft();
+                $('.xui-table-row-header').css({ transform: `translate3d(-${left}px, 0px, 0px)` });
+                console.log(left);
+            });
+        })
+    
+    </script>
+</body>
+</html>

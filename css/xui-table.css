@@ -1,0 +1,83 @@
+* {
+  box-sizing: border-box;
+}
+
+.xui-table {
+  border: 1px solid #eee;
+  position: relative;
+  overflow: hidden;
+}
+.xui-table-header {
+  z-index: 2;
+  position: relative;
+}
+.xui-table-row-header {
+  height: 36px;
+  background: #f5f5f5;
+}
+.xui-table-row-header .xui-table-cell-group-left-shadow, .xui-table-row-header .xui-table-cell-group-right-shadow {
+  height: 36px;
+}
+.xui-table .xui-table-row-header .xui-table-cell {
+  background: #f5f5f5;
+}
+.xui-table-body {
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+.xui-table-body-wheel-area {
+  overflow: hidden;
+  position: absolute;
+}
+.xui-table-row {
+  overflow: hidden;
+  position: absolute;
+  height: 36px;
+  width: 100%;
+  top: 0;
+  border-bottom: 1px solid #eee;
+}
+.xui-table-row-body .xui-table-cell-group-left-shadow, .xui-table-row-body .xui-table-cell-group-right-shadow {
+  height: 36px;
+}
+.xui-table-cell-group-fixed-left {
+  position: absolute;
+  z-index: 4;
+  background: #fff;
+}
+.xui-table-cell-group-fixed-right {
+  position: absolute;
+  z-index: 4;
+  background: #fff;
+  margin-left: 10px;
+}
+.xui-table-cell-group-left-shadow {
+  box-shadow: 3px 0px 5px rgba(9, 9, 9, 0.08);
+}
+.xui-table-cell-group-shadow, .xui-table-cell-group-right-shadow {
+  box-shadow: -3px 0px 5px rgba(9, 9, 9, 0.08);
+}
+.xui-table-cell {
+  height: 36px;
+  border-style: solid;
+  border-width: 0;
+  border-color: #eee;
+  display: block;
+  overflow: hidden;
+  position: absolute;
+  white-space: normal;
+  background: #fff;
+}
+.xui-table-cell-content {
+  padding: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+.xui-table-bordered .xui-table-cell {
+  border-width: 0 1px 0 0;
+}
+
+/*# sourceMappingURL=xui-table.css.map */

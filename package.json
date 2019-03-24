@@ -1,0 +1,19 @@
+{
+  "name": "table-html",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "node-sass": "^4.11.0",
+    "perfect-scrollbar": "^1.4.0",
+    "sass": "^1.17.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build:css": "sass sass/index.scss css/xui-table.css",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
